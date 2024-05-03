@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta property="og:title" content="Meme War">
+  <!-- <meta property="og:image" content="http://memewar.io/images/promo/shoot-upvotes.png"> -->
+  <meta property="og:description" content="Meme War: The battlefield of ideas.">
+  <meta property="og:url" content="http://memewar.io">
+  <title>Meme War 2</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.1/socket.io.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/4.0.1/mustache.min.js"></script>
+  <script type="text/javascript" src="https://d3js.org/d3.v6.js"></script>
+
+
+  <link href="https://fonts.googleapis.com/css?family=Nunito|Cute+Font|East+Sea+Dokdo|Orbitron|Press+Start+2P|Quantico|Stalinist+One" rel="stylesheet"></link>
+  <link rel="stylesheet" href="mobile.css"></link>
+  <!-- <link rel="shortcut icon" href="../images/favicon.ico"><link/> -->
+</head>
+<body>
+  <div class="header-container">
+
+    <div id="leftist-buttons">
+      <div>
+        <button id="contextButton" onclick="contextButtonFunction($(this).html());">Alt</button><br/>
+        <button id="accountButton" onclick="clickAccountButton(this);">Account</button>
+      </div>
+      <div id="signinstuff">
+        <div id="signInBox">
+          <div><input id="signInName" placeholder="username" type="text"/></div>
+          <div><input id="passwordvalue" placeholder="password" type="text"/></div>
+          <button id="submitSignInDetails" class="raise" onclick="loginUser();">Sign in</button><button class="raise" id="registerNewUser" onclick="registerNewUser();">Sign up</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="centerstage">
+      <h1 id="pageID">Meme War 2</h1>
+      <div><marquee behavior="scroll" direction="left" loop="1" scrollamount="20" id="statusbar">Welcome to Meme War!</marquee></div>
+      <!-- <h4 id="pageID">main page</h4> -->
+    </div>
+
+    <div id="right-buttons">
+      <div><button id="make-new-post" class="raise" onclick="showNewPostBox();">Create new post</button></div>
+      <!--<button id="store">store</button>-->
+    </div>
+
+  </div>
+
+  <div class="header-container">
+    <div id="lower-leftist-buttons">
+      <button class="permahidden" id="sort-by-time-only">Time</button>
+      <button class="permahidden" id="sort-by-mv-only">Upvotes</button>
+      <button class="permahidden" id="sort-by-views-only">Views</button> 
+    </div>
+    <div id="popular-tags">
+      <!-- <span class="tooltiptext">use the input bar to filter for only that tag or click one of the popular tags to the right. the number in parentheses represents the number of posts with that tag</span> --><input type="text" id="tag-filter" placeholder="search tags"/>&nbsp;<span id="popular-tag-span"><button class="fill popular-tag-button"><span class="tag-name">ff7</span>&nbsp;(<span class="number-of-posts-with-tag">37</span>)</button>&nbsp;<button class="fill popular-tag-button"><span class="tag-name">xxx</span>&nbsp;(<span class="number-of-posts-with-tag">444</span>)</button></span>
+    </div>
+    
+  </div>
+
+
+
+  <div id="big-container">
+  
+
+    <div id="entryContainer">
+
+      <div postID="142322">
+        <div class="advanced-post-container" >
+          <img class="activeimage advimg" src="uploaded/tifa.jpg"/>
+          <div id="advanced-post-title">Thetetehetete hetetehetetehetetehetete hetetehetetehetetehetete hetete heteteheteteh etete hetetehetete hetetehetetehetetehetetehetete hetete</div>
+        </div>
+        <div id="advanced-post">
+            <div id="advanced-post-stats">
+              <span id="advanced-post-upvotes">33</span>&nbsp;upvotes<br/>
+              <span id="advanced-post-downvotes">3</span>&nbsp;downvotes<br/>
+              <span id="advanced-post-clicks">332</span>&nbsp;clicks<br/>
+              <span id="advanced-post-memecoinsspent">2</span>&nbsp;memecoins spent<br/>
+              <span id="advanced-post-datecreated">32/23/23</span>&nbsp;date created<br/>
+              <span id="advanced-post-postid">142322</span>&nbsp;post ID<br/>
+            </div>
+            <div id="advanced-post-tags">
+              <span class="postTag" tagname="tadfdfdfssge">(<a title="# of posts with this tag. click to view all posts with this tag" class="other-posts-with-this-tag" onclick="getAllPostsWithThisTag('tage');">33</a>)&nbsp;<span class="tagName">tadfdfdfssge</span>&nbsp;(<a title="# of upvotes this tag received for this post. click to spend a memecoin to upvote" class="upvotes-for-tag-for-this-post" onclick="upvoteThisTagForThisPost('tage', $(this).parent().parent().parent().parent().parent().parent().attr('postID'));">1</a>)</span>&nbsp;&nbsp;
+              <span class="postTag" tagname="tage">(<a title="# of posts with this tag. click to view all posts with this tag" class="other-posts-with-this-tag" onclick="getAllPostsWithThisTag('tage');">33</a>)&nbsp;<span class="tagName">tage</span>&nbsp;(<a title="# of upvotes this tag received for this post. click to spend a memecoin to upvote" class="upvotes-for-tag-for-this-post" onclick="upvoteThisTagForThisPost('tage', $(this).parent().parent().parent().parent().parent().parent().attr('postID'));">1</a>)</span>&nbsp;&nbsp;
+              <span class="postTag" tagname="tage">(<a title="# of posts with this tag. click to view all posts with this tag" class="other-posts-with-this-tag" onclick="getAllPostsWithThisTag('tage');">33</a>)&nbsp;<span class="tagName">tage</span>&nbsp;(<a title="# of upvotes this tag received for this post. click to spend a memecoin to upvote" class="upvotes-for-tag-for-this-post" onclick="upvoteThisTagForThisPost('tage', $(this).parent().parent().parent().parent().parent().parent().attr('postID'));">1</a>)</span>&nbsp;&nbsp;
+            </div>
+        </div>
+        <div id="advanced-post-content">rtrtrtert rtert rtr tr ertrt t rtr t trrrrrrrrrrt trt rttttttttttttttt rt rtttttttttttttttt rrt tttr t tresedr trt r tsetrrrrrrrrrrttrt t rtr t trrrrrrrrrrt trt rttttttttttttttt rt rtttttttttttttttt rrt tttr t tresedr trt r tsetrrrrrrrrrrt tr trt rtsert rt sr tr tr t rrrrrrrrrrrrt trrrrrrrrrrrrrt rrrrrrrrrrrrrtt rtrt t rtr t trrrrrrrrrrt trt rttttttttttttttt rt rtttttttttttttttt rrt tttr t tresedr trt r tsetrrrrrrrrrrt tr trt rtsert rt sr tr tr t rrrrrrrrrrrrt trrrrrrrrrrrrrt rrrrrrrrrrrrrtt rtrt t rtr t trrrrrrrrrrt trt rttttttttttttttt rt rtttttttttttttttt rrt tttr t tresedr trt r tsetrrrrrrrrrrt tr trt rtsert rt sr tr tr t rrrrrrrrrrrrt trrrrrrrrrrrrrt rrrrrrrrrrrrrtt rttttt rrt tttr t tresedr trt r tsetrrrrrrrrrrt tr trt rtsert rt sr tr tr t rrrrrrrrrrrrt trrrrrrrrrrrrrt rrrrrrrrrrrrrtt rtrrrrrrrr</div>
+        <div id="advanced-post-favoriters">
+          <button class="raise" onclick=""></button>
+        </div>
+        <div class="post-buttons">
+            <button class="raise anonallow" onclick="showReplyBox($(this).parent().parent());"><span class="tooltiptext">quick reply</span>&#x1f5e8;</button>
+            <button class="raise profallow" onclick="showVoteBox($(this).parent().parent().attr('postID'), true);"><span class="tooltiptext">upvote</span>&#10133;</button>
+            <button class="raise profallow" onclick="showVoteBox($(this).parent().parent().attr('postID'), false);"><span class="tooltiptext">downvote</span>&#10134;</button>
+            <span class="advancedButtons">
+              <button class="raise profallow" onclick="showShieldCensorHarvestBox(2, $(this).parent().parent().attr('postID'));"><span class="tooltiptext">convert this post's profit into memecoin, then delete post</span>♻</button>
+              <button class="raise profallow" onclick="showShieldCensorHarvestBox(1, $(this).parent().parent().attr('postID'));"><span class="tooltiptext">add a free speech shield to this post</span>🛡</button>
+              <button class="raise profallow" onclick="showShieldCensorHarvestBox(0, $(this).parent().parent().attr('postID'));"><span class="tooltiptext">attempt to censor this post</span>&#x1f4a3;</button>
+              <button class="raise anonallow" onclick="showShareBox($(this).parent().parent());"><span class="tooltiptext">share this post</span><svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path fill="#dfe09d" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg></button>
+              <button class="raise profallow" onclick="favoritePost($(this).parent().parent());"><span class="tooltiptext">favorite this post</span>❤</button>
+            </span>
+            <button class="raise anonallow" onclick="showTagBox($(this).parent().parent().attr('postID'));"><span class="tooltiptext">tag this post</span>🏷</button>
+            <div class="statusdiv" id="142322"></div>
+        </div>
+      </div>
+  <!--       <div class="post-container" postID="1605905839">
+          <div class="post">
+            <a class="post-helper" href="/?q=1605905839" onclick="viewPost($(this).parent().parent().attr('postID'));">
+              <div class="post-visual"><img src="uploaded/tifa.jpg"/></div>
+              <div class="post-title-helper"><span class="post-title">Hot pic of tifa cosplay</span><br/>
+              <div class="post-content"><div class="post-content-span">test</div></div></div>
+            </a>
+            <div class="post-header">
+              <span class="upvotes-tooltip"><span class="tooltiptext">the number of +'s minus the number of -'s this post received</span><span class="upvotecount">34</span>&nbsp;profit</span>
+              &nbsp;&nbsp;|&nbsp;&nbsp;
+              <span class="views-tooltip"><span class="tooltiptext">the number of times someone actually clicked on this post</span><span class="viewcount">100</span>&nbsp;clicks</span>
+              &nbsp;&nbsp;|&nbsp;&nbsp;<span class="post-date">3/4/2020</span>
+              &nbsp;&nbsp;|&nbsp;&nbsp;<span><span class="post-numreplies">3</span>&nbsp;replies</span>
+              &nbsp;&nbsp;|&nbsp;&nbsp;<span>reply to&nbsp;<span class="replyToId">TITLKE</span></span>
+            </div>
+          </div>
+          <div class="post-buttons">
+            <button class="raise anonallow" onclick="showReplyBox($(this).parent().parent());"><span class="tooltiptext">quick reply</span>&#x1f5e8;</button>
+            <button class="raise profallow" onclick="showVoteBox($(this).parent().parent().attr('postID'), true);"><span class="tooltiptext">upvote</span>&#10133;</button>
+            <button class="raise profallow" onclick="showVoteBox($(this).parent().parent().attr('postID'), false);"><span class="tooltiptext">downvote</span>&#10134;</button>
+            <span class="advancedButtons">
+              <button class="raise profallow" onclick="showShieldCensorHarvestBox(2, $(this).parent().parent().attr('postID'));"><span class="tooltiptext">convert this post's profit into memecoin, then delete post</span>♻</button>
+              <button class="raise profallow" onclick="showShieldCensorHarvestBox(1, $(this).parent().parent().attr('postID'));"><span class="tooltiptext">add a free speech shield to this post</span>🛡</button>
+              <button class="raise profallow" onclick="showShieldCensorHarvestBox(0, $(this).parent().parent().attr('postID'));"><span class="tooltiptext">attempt to censor this post</span>&#x1f4a3;</button>
+              <button class="raise anonallow" onclick="showShareBox($(this).parent().parent());"><span class="tooltiptext">share this post</span><svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path fill="#dfe09d" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg></button>
+              <button class="raise profallow" onclick="favoritePost($(this).parent().parent());"><span class="tooltiptext">favorite this post</span>❤</button>
+            </span>
+            <button class="raise anonallow" onclick="showTagBox($(this).parent().parent().attr('postID'));"><span class="tooltiptext">tag this post</span>🏷</button>
+            <div class="statusdiv" id="1605905839"></div>
+          </div>
+        </div> -->
+    </div>
+
+
+    <div id="divStorage">
+
+      <div id="newPostContainer">
+        <form ref='uploadForm' 
+            id='uploadForm' 
+            action='/upload' 
+            onsubmit='submitNewPost();' 
+            method='post' 
+            encType='multipart/form-data'>
+            <input class="permahidden" id="userID-newpost" name="userID"/>
+            <input class="permahidden" id="posttype-newpost" name="type"/>
+            <input required id="tagForNewPost" name="tag" placeholder="you MUST provide a tag for your post. how do you want your post to be categorized?" type="text" maxlength="64"/>
+            <br/>
+            <input type="text" style='height:50px;' placeholder="you can treat this field like a title, or like a tweet if you're not putting anything in the box below" id="uploadTitle" name="title" maxlength="320"/>
+            <br/>
+            <textarea type="text" style='height:300px;' placeholder="your post content can be a link, a goddamn 3,000 word essay, or nothing at all" id="uploadContent" name="content" maxlength="25000"></textarea>
+            <br/>
+            <img id="myimg" src="" height="150" alt="Image preview...">
+            <input type="file" id="sampleFile" name="sampleFile" onchange="previewFile();"/>
+            <input class="raise" type='submit' value='Submit!' />
+          </form>
+          <button id="cancelNewPost" class="raise" onclick="returnNewPostBox();">Cancel</button>
+      </div>
+
+      <div id="replyContainer">
+        <form ref='uploadFormReply' 
+            id='uploadFormReply' 
+            action='/uploadreply' 
+            onsubmit='submitReply();'
+            method='post' 
+            encType='multipart/form-data'>
+            <input class="permahidden" id="title-reply" name="title"/>
+            <input class="permahidden" id="replytoPostID" name="replyto"/>
+            <input class="permahidden" id="userID-reply" name="userID"/>
+            <input class="permahidden" id="posttype-reply" name="type"/>
+            <input id="tagForNewReply" name="tag" placeholder="you may provide a tag for your post" type="text" maxlength="64"/>
+            <br/>
+            <textarea type="text" style='height:300px;' placeholder="your reply content can be a straight link, a goddamn 3,000 word essay, or nothing at all" id="uploadContent-reply" name="content" maxlength="25000"></textarea>
+            <br/>
+            <img id="myimg-reply" src="" height="150" alt="Image preview...">
+            <input type="file" id="sampleFile-reply" name="sampleFile-reply" onchange="previewFile();"/>
+            <input class="raise" type='submit' value='Submit!' />
+          </form>
+          <button id="cancelNewPost-reply" class="raise" onclick="returnReplyBox();">Cancel</button> 
+      </div>
+
+      <div id="tagContainer">
+        <div id="existingTagsForThisPost">
+          Existing tags for this post:&nbsp;
+
+        </div>
+        <div id="addNewTag">
+          <input id="newTagSuggestion" type="text" title="'keyboard smash' tags won't be deleted, but will be consolidated into the JUNK tag at the admin's pleasure" maxlength="24"/><button id="submitTag" onclick="submitTag(document.getElementById('newTagSuggestion').value, $(this).parent().parent().parent().parent().parent().attr('postID'));">Tag this post</button><button id="cancelTag" onclick="returnTagBox();">Cancel</button>
+        </div>
+      </div>
+
+
+      <div id="newStatsContainer">
+        <div>For each individual post, for each + or - after the first vote costs double the memecoin it did prior. </div>
+        <div>Cost of next vote:&nbsp;<span id="cost-of-next-vote">?</span></div>
+        <div>Current votes:&nbsp;<span id="upvotestat">84</span>&nbsp;&#10133;'s&nbsp;&nbsp;|&nbsp;&nbsp;<span id="downvotestat">50</span>&nbsp;&#10134;'s&nbsp;&nbsp;|&nbsp;&nbsp;<span id="totalvotestat"></span></div>
+      </div>
+
+
+      <!--      <div id="fileuploader"><input type="file" onchange="previewFile();"/><br/><img id="myimg" src="" height="150" alt="Image preview..."></div> -->
+
+
+      <div id="censorShieldHarvestContainer">
+        <div class="harvestmessage"><span id="harvestmessage-span">harvesting your post converts its profit into memecoin, but deletes the post</span></div>
+        <div class="censormessage"><span id="censormessage-span">are you sure you want to attempt to delete this person's post? if they have a free speech shield, you'll waste your memecoin...</span></div>
+        <div class="shieldmessage"><span id="shieldmessage-span">free speech shields cost half as much and block 1 censor attempt!</span></div>
+        <div><button class="censormessage" id="confirmCensor" onclick="confirmCensor($(this).parent().parent().parent().parent().parent().attr('postID'));">CENSOR</button><button class="shieldmessage" id="confirmShield" onclick="confirmShield($(this).parent().parent().parent().parent().parent().attr('postID'));">SHIELD</button>
+            <button class="harvestmessage" id="confirmHarvest" onclick="confirmHarvest($(this).parent().parent().parent().parent().parent().attr('postID'));">HARVEST</button><button onclick="$('#censorShieldHarvestContainer').css('display', 'none');" id="cancelCensor">CANCEL</button></div>
+      </div>
+
+
+      <div id="shareButtonContainer">
+        I understand how shitty other platforms are, but it's only by mingling with the lower races that we can bring them up... This is the memelord's burden.
+        <div>
+          <a href="https://twitter.com/share?ref_src=twsrc%5Etfw/+463634643" class="twitter-share-button" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+        </div>
+      </div>
+
+
+      <div id="warningFloater">
+      </div>
+    </div>
+
+
+  </div>
+
+
+  <div>
+
+    <div id="adjacentblocks">
+
+      <div id="previewframe">
+        <div id="previewframeTopSpace"></div>
+        <div id="postNameInModalPostOnly"></div>
+        <button id="upvote" onclick="upvotePost()">Upvote it</button>
+        <button id="downvote">Hate it</button> 
+        <button id="tagIt" onclick="tagPost()">Tag it</button>
+        <button id="closeWindow" onclick="closeAllFrames();document.getElementById('uploadNewPostButton').innerHTML='+';clickOnAddNewPost=false;">Close</button>
+
+        <div class="autocomplete" style="width:300px;"><input type="text" id="newTagInput" maxlength="20" placeholder="enter your tag (autolowercase)"/></div>
+          <br/>
+          <hr/>
+        <div id="previewContent">test</div>
+      </div>
+
+      <div id="d3frame" >
+        <button id="uploadNewPostButton" onclick="clickNewPostButton()">+</button>
+        <svg ></svg>
+      </div>
+
+
+      <div id="upvoteTagModal">
+        <span>Upvote&nbsp;</span><span id="tagNameInModal"></span><span>&nbsp;tag on post&nbsp;</span><span id="postNameInModal"></span><span>&nbsp;?</span>
+        <div id="contentInModal"></div>
+        <hr/>
+        <button id="upvoteTag" onclick="upvoteTag()">Upvote tag?</button>
+        <button class="closeWindow" onclick="closeAllFrames();document.getElementById('uploadNewPostButton').innerHTML='+';clickOnAddNewPost=false;">Close</button>
+      </div>
+
+
+      <div id="submitnew">
+        <input type="text" id="nodename"  maxlength="150" class="submissionslot" placeholder="post title goes here"/>
+        <input type="text" id="userInputtedContent" class="submissionslot" placeholder="link goes here"/><br/>
+        <input type="text" id="tag1" maxlength="20" class="submissionslot" placeholder="tag1 (must fill!)"/><br/>
+        <input type="text" id="tag2" maxlength="20" placeholder="tag2 (optional)"/><br/>
+        <button id="upload" onclick="sendNewPostToServer()" disabled="disabled">Upload</button>
+      </div>
+
+    </div>
+
+  </div>
+
+<script src="client.js" type="text/javascript"></script>
+</body>
+
+</html>

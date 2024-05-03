@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta property="og:title" content="tomoni">
+    <meta property="og:description" content="tomoni">
+    <meta property="og:url" content="http://tomoni.io">
+    <title>tomoni</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.1/socket.io.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/4.0.1/mustache.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3-dispatch@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-quadtree@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-timer@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-force@3"></script>
+
+    <script type="text/javascript" src="https://d3js.org/d3.v6.js"></script>
+    <script type="text/javascript" src="topojson.v1.min.js"></script>
+    <script type="text/javascript" src="planetaryjs.js"></script>
+    <script type="text/javascript" src="paper-full.js"></script>
+    <!--<script type="text/paperscript" canvas="myCanvas"></script>-->
+    <link rel="stylesheet" href="leaflet/leaflet.css" />
+    <script src="leaflet/leaflet.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css?family=Nunito|Cute+Font|East+Sea+Dokdo|Orbitron|Press+Start+2P|Quantico|Stalinist+One" rel="stylesheet" />
+    <link rel="stylesheet" href="index.css" />
+    <!-- <link rel="shortcut icon" href="../images/favicon.ico"><link/> -->
+</head>
+<body>
+    <div class="header-container">
+        <div id="leftist-buttons">
+            <div>
+                <button id="contextButton" onclick="contextButtonFunction($(this).html());">Alt</button><button id="multistreamButton" onclick="multistreamView();">Multi</button><br />
+                <button id="accountButton" onclick="clickAccountButton(this);">Account</button><span id="currentrole">test</span>
+                <div><button id="signout" class="raise profallow" onclick="signout(this);">Sign out</button></div>
+
+            </div>
+            <div id="signinstuff">
+                <div id="signInBox">
+                    <div><input id="signInName" placeholder="username" type="text" /></div>
+                    <div><input id="passwordvalue" placeholder="password" type="text" /></div>
+                    <button id="submitSignInDetails" class="raise" onclick="loginUser();">Sign in</button><button class="raise" id="registerNewUser" onclick="registerNewUser();">Sign up</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="centerstage">
+            <button onclick="gohome();"><h1 id="pageID">tomoni<span id="pageID-tagname"></span></h1></button>
+            <div><marquee behavior="slide" direction="left" scrollamount="35" loop="1" id="statusbar">Welcome to tomoni!</marquee></div>
+        </div>
+
+        <div id="right-buttons">
+            <div><button id="make-new-post" class="raise" onclick="showNewPostBox();">Create new post</button></div>
+            <div id="test-buttons">
+                <div><button id="make-new-poll" class="raise pollsters-only" onclick="showNewPollBox();">Create new poll</button></div>
+                <div><button id="gamebutton" class="raise" onclick="openGameView();">Open game view</button></div>
+                <div><button id="historybutton" class="raise" onclick="openHistoryView();">Open history view</button></div>
+                <div><button id="cast-algomancy" class="raise algomancers-only" onclick="showAlgomancyBox();">Practice algomancy</button></div>
+                <div><button id="show-paint" class="raise" onclick="showPaintedPosts();">Show painted posts</button></div>
+                <div><button id="arbitrator" class="raise" onclick="arbitratorSort();">View reports</button></div>
+                <div><button id="create-new-group" class="raise" onclick="showGroupCreatorBox();">Make new group</button></div>
+                <div><button id="view-groups" class="raise" onclick="requestGroups();">Request groups</button></div>
+                <div><button id="new-grid" class="raise" onclick="requestPileStyle();">Pile style</button></div>
+                <div><button id="show-map" class="raise" onclick="showMap();">Show map</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="signup-overlay-box">
+        <div class="app">
+            <h1>Choose your role!</h1>
+
+            <ul class="hs full">
+                <li class="item roleraise" onclick="selectThisRole('Lurker');"><h2>Lurker</h2><div>Votes count as doubled, but you can't make threads or comments.<br />You prefer to make your impact from the shadows.</div></li>
+                <li class="item roleraise" onclick="selectThisRole('Tagger');"><h2>Tagger</h2><div>Add a tag to threads or individual comments.<br />You enjoy bringing order to the world.</div></li>
+                <li class="item roleraise" onclick="selectThisRole('Painter');"><h2>Painter</h2><div>Customize the stylesheets of threads.<br />You have a keen aesthetic eye.</div></li>
+                <li class="item roleraise" onclick="selectThisRole('Pollster');"><h2>Pollster</h2><div>Include polls in your comments or threads.<br />You realize collecting data is key to understanding the universe.</div></li>
+                <li class="item roleraise" onclick="selectThisRole('Tastemaker');"><h2>Tastemaker</h2><div>Add threads to the recommended feed.<br />You know what people like.</div></li>
+                <li class="item roleraise" onclick="selectThisRole('Explorer');"><h2>Explorer</h2><div>Gain access to the recently added and loathed feed.<br />You go where others fear to tread.</div></li>
+                <li class="item roleraise" onclick="selectThisRole('Summoner');"><h2>Summoner</h2><div>Invite specific users to threads and comments.<br />You like bringing people together.</div></li>
+                <li class="item roleraise" onclick="selectThisRole('Protector');"><h2>Protector</h2><div>Attempt to censor or shield 3 comments per day.<br />You are both a protector of free speech and hate speech.</div></li>
+                <li class="item roleraise" onclick="selectThisRole('Arbitrator');"><h2>Arbitrator</h2><div>Arbitrate disputes other users have.<br />You believe everyone has the right to trial by a jury of their peers.</div></li>
+                <li class="item roleraise" onclick="selectThisRole('Stalker');"><h2>Stalker</h2><div>View the likes and bios of private users.<br />You prefer to know more about people than they know about you.</div></li>
+                <li class="item roleraise" onclick="selectThisRole('Editor');"><h2>Editor</h2><div>Suggest edits to any post.<br />You always see room for improvement.</div></li>
+                <li class="item roleraise" onclick="selectThisRole('Leader');"><h2>Leader</h2><div>Other users can follow you.<br />You relish the spotlight.</div></li>
+                <li class="item roleraise" onclick="selectThisRole('Counselor');"><h2>Counselor</h2><div>SHOULD I COMBINE THIS WITH SUMMONER??<br /></div></li>
+                <li class="item roleraise" onclick="selectThisRole('Founder');"><h2>Founder</h2><div>Create and manage groups.<br />You don't mind responsibility.</div></li>
+                <li class="item roleraise" onclick="selectThisRole('Algomancer');"><h2>Algomancer</h2><div>Edit the collective custom algorithm how you see fit.<br />You like to tinker.</div></li>
+            </ul>
+
+
+            <div class="container">
+                <div class="item">
+                    <button><h3>Select the role <span id="submitRoleButton"></span></h3></button>
+                    <button id="cancelChooseRole" class="raise" onclick="returnChooseRoleBox();">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="algomancy-overlay-box">
+        <div class="app">
+            <div class="container">
+                <form ref='uploadAlgorithmic changes'
+                      id='uploadAlgomancy'
+                      action='/uploadAlgomod'
+                      onsubmit='submitNewAlgomance();'
+                      method='post'
+                      encType='multipart/form-data'>
+                    <label for="likeweight">Like weight:</label><input type="number" id="likeweight" name="likeweight" min="-10" max="10">
+                    <label for="viewweight">View weight:</label><input type="number" id="viewweight" name="viewweight" min="-10" max="10">
+                    <label for="sizeweight">Size weight:</label><input type="number" id="sizeweight" name="sizeweight" min="-10" max="10">
+                    <label for="timeweight">Time weight:</label><input type="number" id="timeweight" name="timeweight" min="-10" max="10">
+                    <label for="commentweight">Comment weight:</label><input type="number" id="commentweight" name="commentweight" min="-10" max="10">
+                    <label for="userweight">Unique user weight:</label><input type="number" id="userweight" name="userweight" min="-10" max="10">
+                    <br />
+                    <input class="raise" type='submit' value='Submit!' />
+                </form>
+            </div>
+            <div class="container">
+                <div class="item">
+                    <button><h3>Cast algomancy<span id="algomancycost"></span></h3></button>
+                    <button id="cancelAlgomancy" class="raise" onclick="returnAlgomancyBox();">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="header-container">
+        <div class="lower-leftist-buttons">
+            <div class="w3-dropdown-click">
+                <button onclick="dropDownFunction()" class="w3-button w3-black">Sort by</button>
+                <div id="Demo" class="w3-dropdown-content w3-bar-block w3-border">
+                    <button onclick="algomancerSort()" class="w3-bar-item w3-button" id="sort-by-random">Algomancer</button>
+                    <button onclick="controversialSort()" class="w3-bar-item w3-button explorers-only" id="sort-by-controversial">Most controversial</button>
+                    <button onclick="likedSort()" class="w3-bar-item w3-button" id="sort-by-upvotes">Most liked</button>
+                    <button onclick="loathedSort()" class="w3-bar-item w3-button explorers-only" id="sort-by-downvotes">Most loathed</button>
+                    <button onclick="recentSort()" class="w3-bar-item w3-button explorers-only" id="sort-by-time">Most recent</button>
+                    <button onclick="viewedSort()" class="w3-bar-item w3-button" id="sort-by-clicks">Most viewed</button>
+                    <button onclick="recommendedSort()" class="w3-bar-item w3-button" id="sort-by-clicks">Most recommended</button>
+                    <button onclick="randomSort()" class="w3-bar-item w3-button" id="sort-by-random">Random sample</button>
+                </div>
+            </div>
+            <div id="popular-tags">
+                <!-- <span class="tooltiptext">use the input bar to filter for only that tag or click one of the popular tags to the right. the number in parentheses represents the number of posts with that tag</span> --><input type="text" id="tag-filter" placeholder="input a tag to search for" />&nbsp;<span id="popular-tag-span"><!-- <button class="fill popular-tag-button"><span class="tag-name">ff7</span>&nbsp;(<span class="number-of-posts-with-tag">37</span>)</button>&nbsp;<button class="fill popular-tag-button"><span class="tag-name">xxx</span>&nbsp;(<span class="number-of-posts-with-tag">444</span>)</button> --></span>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="big-container">
+
+        <div id="d3frame">
+            <button id="uploadNewPostButton" onclick="clickNewPostButton()">+</button>
+            <svg id="svg"></svg>
+        </div>
+
+
+        <div id="entryContainer">
+
+        </div>
+
+        <div id="multiContainer">
+            <div id="multi-left"></div>
+            <div id="multi-center"></div>
+            <div id="multi-right"></div>
+        </div>
+
+        <div id="divStorage">
+
+            <div id="newPostContainer">
+
+                <div id="map" style="width: 600px; height: 400px;"></div>
+                <script>
+                    const map = L.map('map').setView([51.505, -0.09], 13);
+                    const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 19,
+                        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                    }).addTo(map);
+                    var popup = L.popup();
+                    function onMapClick(e) {
+                        popup
+                            .setLatLng(e.latlng)
+                            .setContent("You clicked the map at " + e.latlng.toString())
+                            .openOn(map);
+                        document.getElementById('location-newpost').value = e.latlng.lat.toString() +'+'+ e.latlng.lng.toString();
+                    }
+                    map.on('click', onMapClick);
+                </script>
+                <form ref='uploadForm'
+                      id='uploadForm'
+                      action='/upload'
+                      onsubmit='submitNewPost();'
+                      method='post'
+                      encType='multipart/form-data'>
+                    <input class="permahidden" id="userID-newpost" name="userID" />
+                    <input class="permahidden" id="posttype-newpost" name="type" />
+                    <input class="permahidden" id="location-newpost" name="location" />
+                    <input class="permahidden" id="userroles-newpost" name="userroles" />
+                    <input class="permahidden" id="leader-newpost" name="leader" />
+                    <input required id="tagForNewPost" name="tag" placeholder="you MUST provide a tag for your post. how do you want your post to be categorized?" type="text" maxlength="64" />
+                    <br />
+                    <input type="text" style='height:50px;' placeholder="you can treat this field like a title, or like a tweet if you're not putting anything in the box below" id="uploadTitle" name="title" maxlength="320" />
+                    <br />
+                    <textarea type="text" style='height:300px;' placeholder="your post content can be a link, a goddamn 3,000 word essay, or nothing at all" id="uploadContent" name="content" maxlength="25000"></textarea>
+                    <br />
+                    <img id="myimg" src="" height="150" alt="Image preview...">
+                    <input type="file" id="sampleFile" name="sampleFile" onchange="previewFile();" />
+                    <input class="raise" type='submit' value='Submit!' />
+                </form>
+                <button id="cancelNewPost" class="raise" onclick="returnNewPostBox();">Cancel</button>
+            </div>
+
+            <div id="replyContainer">
+                <form ref='uploadFormReply'
+                      id='uploadFormReply'
+                      action='/uploadreply'
+                      onsubmit='submitReply();'
+                      method='post'
+                      encType='multipart/form-data'>
+                    <input class="permahidden" id="title-reply" name="title" />
+                    <input class="permahidden" id="replytoPostID" name="replyto" />
+                    <input class="permahidden" id="userID-reply" name="userID" />
+                    <input class="permahidden" id="posttype-reply" name="type" />
+                    <input id="tagForNewReply" name="tag" placeholder="you may provide a tag for your post" type="text" maxlength="64" />
+                    <br />
+                    <textarea type="text" style='height:300px;' placeholder="your reply content can be a straight link, a goddamn 3,000 word essay, or nothing at all" id="uploadContent-reply" name="content" maxlength="25000"></textarea>
+                    <br />
+                    <img id="myimg-reply" src="" height="150" alt="Image preview...">
+                    <input type="file" id="sampleFile-reply" name="sampleFile-reply" onchange="previewFile();" />
+                    <input class="raise" type='submit' value='Submit!' />
+                </form>
+                <button id="cancelNewPost-reply" class="raise" onclick="returnReplyBox();">Cancel</button>
+            </div>
+
+
+            <div id="pollContainer">
+                <form ref='uploadPoll'
+                      id='uploadPoll'
+                      action='/uploadpoll'
+                      onsubmit='submitNewPoll();'
+                      method='post'
+                      encType='multipart/form-data'>
+                    <input type="text" style='height:50px;' placeholder="What is the question you want to ask?" id="uploadTitle-poll" name="title" maxlength="320" />
+                    <!--<input class="permahidden" id="replytoPostID-poll" name="replyto" />-->
+                    <input class="permahidden" id="userID-poll" name="userID" />
+                    <input class="permahidden" id="posttype-poll" name="type" />
+                    <input class="permahidden" id="userroles-poll" name="userroles" />
+                    <br />
+                    <div id="pollOptionContainer">
+                        <textarea type="text" style='height:30px;' placeholder="write a poll option here" id="uploadPollOption-1" name="pollOption1" maxlength="800"></textarea><br />
+                        <textarea type="text" style='height:30px;' placeholder="write a poll option here" id="uploadPollOption-2" name="pollOption2" maxlength="800"></textarea><br />
+                    </div>
+                    <img id="myimg-poll" class="permahidden" src="" height="150" alt="Image preview..." />
+                    <input type="file" class="permahidden" id="sampleFile-poll" name="sampleFile-poll" onchange="previewFile();" />
+                    <br />
+                    <input class="raise" type='submit' value='Submit!' />
+                </form>
+                <button id="cancelNewPost-poll" class="raise" onclick="returnPollBox();">Cancel</button>
+                <button onclick="addPollOption()">Add Poll Option</button>
+            </div>
+            <!--
+         <br />
+         <div id="pollOptionContainer">
+         </div>
+          <img id="myimg-poll" src="" height="150" alt="Image preview...">
+        <input type="file" id="sampleFile-reply" name="sampleFile-reply" onchange="previewFile();" /> -->
+
+            <div id="tagContainer">
+                <div id="existingTagsForThisPost">
+                    Existing tags for this post:&nbsp;
+                </div>
+                <div id="addNewTag" class="taggers-only">
+                    <input id="newTagSuggestion" type="text" title="'keyboard smash' tags won't be deleted, but will be consolidated into the JUNK tag at the admin's pleasure" maxlength="24" /><button id="submitTag" onclick="submitTag(document.getElementById('newTagSuggestion').value, $(this).parent().parent().parent().parent().parent().attr('postID'));">Tag this post</button><button id="cancelTag" onclick="returnTagBox();">Cancel</button>
+                </div>
+            </div>
+
+            <div id="newStatsContainer">
+                <div>For each individual post, for each + or - after the first vote costs double the memecoin it did prior. </div>
+                <div>To vote again will cost you:&nbsp;<span id="cost-of-next-vote">?</span>&nbsp;memecoin</div>
+                <div>Current votes:&nbsp;<span id="upvotestat">84</span>&nbsp;&#10133;'s&nbsp;&nbsp;|&nbsp;&nbsp;<span id="downvotestat">50</span>&nbsp;&#10134;'s&nbsp;&nbsp;|&nbsp;&nbsp;<span id="totalvotestat"></span></div>
+            </div>
+
+            <div id="censorShieldHarvestContainer">
+                <div class="harvestmessage"><span id="harvestmessage-span">harvesting your post converts its profit into memecoin, but deletes the post</span></div>
+                <div class="censormessage"><span id="censormessage-span">are you sure you want to attempt to delete this person's post? if they have a free speech shield, you'll waste your memecoin...</span></div>
+                <div class="shieldmessage"><span id="shieldmessage-span">free speech shields cost half as much and block 1 censor attempt!</span></div>
+                <div>
+                    <button class="censormessage" id="confirmCensor" onclick="confirmCensor($(this).parent().parent().parent().parent().parent().attr('postID'));">CENSOR</button><button class="shieldmessage" id="confirmShield" onclick="confirmShield($(this).parent().parent().parent().parent().parent().attr('postID'));">SHIELD</button>
+                    <button class="harvestmessage" id="confirmHarvest" onclick="confirmHarvest($(this).parent().parent().parent().parent().parent().attr('postID'));">HARVEST</button><button onclick="$('#censorShieldHarvestContainer').css('display', 'none');" id="cancelCensor">CANCEL</button>
+                </div>
+            </div>
+
+            <div id="shareButtonContainer">
+                I understand how shitty other platforms are, but it's only by mingling with the lower races that we can bring them up... This is the memelord's burden.
+                <div>
+                    <a href="https://twitter.com/share?ref_src=twsrc%5Etfw/+463634643" class="twitter-share-button" data-show-count="false">Tweet</a>
+                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                </div>
+            </div>
+
+            <div id="paintContainer">
+                <form ref='uploadPaintChange'
+                      id='uploadPaint'
+                      action='/uploadpaintmod'
+                      onsubmit='submitNewPaint();'
+                      method='post'
+                      encType='multipart/form-data'>
+                    <select id="paintFont" name="paintfont">
+                        <option value="courier">Courier</option>
+                        <option value="comicsans">Comic Sans</option>
+                        <option value="impact">Impact</option>
+                    </select><br />
+                    <select id="paintSize" name="paintsize">
+                        <option value="small">Small</option>
+                        <option value="medium">Medium</option>
+                        <option value="big">Big</option>
+                    </select>
+                    <br />
+                    <select id="paintBorder" name="paintborder">
+                        <option value="dashed">Dashed</option>
+                        <option value="doubledash">Double</option>
+                        <option value="nodash">None</option>
+                    </select>
+                    <br />
+                    <select id="paintBackground" name="paintbackground">
+                        <option value="au">Grey</option>
+                        <option value="blue">Blue</option>
+                        <option value="offwhite">Offwhite</option>
+                    </select>
+                    <br />
+                    <input class="permahidden" id="paintPostId" name="paintPostId" />
+                    <input class="permahidden" id="paintUserId" name="paintUserId" />
+                    <img id="myimg-paint" class="permahidden" src="" height="150" alt="Image preview..." />
+                    <input type="file" class="permahidden" id="sampleFile-paint" name="sampleFile-paint" onchange="previewFile();" />
+                    <br />
+                    <input class="raise" type='submit' value='Submit!' />
+                </form>
+                <button id="cancelPaint" class="raise" onclick="returnPaintBox();">Cancel</button>
+            </div>
+
+            <div id="reportBoxContainer">
+                <div>
+                    <form ref='uploadReportPost' id='uploadReport' action='/uploadreport' onsubmit='submitReport();' method='post' encType='multipart/form-data'>
+                        <input class="permahidden" id="postID_report" name="postIDreport" />
+                        <input class="permahidden" id="userID_report" name="userIDreport" />
+                        <label for="carecost">How much you care (burn upvotes to move your report to the top of the list):</label>
+                        <input type="number" id="carecost" name="carecost" min="0" max="20"><br />
+                        <label for="reportreason">Why this post should be deleted (you can only pick one):</label>
+                        <select id="reportreason" name="reportreason">
+                            <option value="cringe">Cringe</option>
+                            <option value="mean">Harassment</option>
+                            <option value="illegal">Illegal</option>
+                            <option value="disinfo">Disinformation</option>
+                            <option value="subversive">Subversive</option>
+                            <option value="spam">Spam</option>
+                        </select>
+                        <br />
+                        <input class="raise" type="submit" value="Submit" />
+                    </form>
+                    <button id="cancelReport" class="raise" onclick="returnReportBox();">Cancel</button>
+                </div>
+            </div>
+
+            <div id="editBoxContainer">
+                <div>
+                    <form ref='editPostContainer' id='edit_box' action='/editpost' onsubmit='returnEditBox();' method='post' encType='multipart/form-data'>
+                        <input class="permahidden" id="postID_edit" name="postIDedit" />
+                        <input class="permahidden" id="userID_edit" name="userIDedit" />
+                        <label for="whichusertosummon">Group name:</label><input type="text" id="summon_which_user" name="whichusertosummon" minlength="1" maxlength="32" required placeholder="spell their username exactly right"><br />
+                        <input class="raise" type="submit" value="Submit" />
+                    </form>
+                    <button id="cancelEdit" class="raise" onclick="returnEditBox();">Cancel</button>
+                </div>
+            </div>
+
+            <div id="tastemakerContainer">
+                <div>
+                    <button onclick="submitRecommendation($(this).parent().parent().parent().parent().parent().attr('postID'));">Recommend?</button>
+                    <form ref='tastemakerForm' id='tastemaker_form' action='/recommend' onsubmit='returnTastemakerBox();' method='post' encType='multipart/form-data'>
+                        <input class="permahidden" id="postID_taste" name="postIDtaste" />
+                        <input class="permahidden" id="userID_taste" name="userIDtaste" />
+                        <input class="raise" type="submit" value="Submit" />
+                    </form>
+                    <button id="cancelTaste" class="raise" onclick="returnTastemakerBox();">Cancel</button>
+                </div>
+            </div>
+
+            <div id="summonUserContainer">
+                <div>
+                    <form ref='summonUserForm' id='summon_user_form' action='/summonuser' onsubmit='returnSummonBox();' method='post' encType='multipart/form-data'>
+                        <input class="permahidden" id="postID_summon" name="postIDsummon" />
+                        <input class="permahidden" id="userID_summon" name="userIDsummon" />
+                        <label for="whichusertosummon">Group name:</label><input type="text" id="summon_which_user" name="whichusertosummon" minlength="1" maxlength="32" required placeholder="spell their username exactly right"><br />
+                        <input class="raise" type="submit" value="Submit" />
+                    </form>
+                    <button id="cancelSummon" class="raise" onclick="returnSummonBox();">Cancel</button>
+                </div>
+            </div>
+
+            <div id="groupCreatorContainer">
+                <div>
+                    <form ref='uploadNewGroup' id='upload_group' action='/uploadnewgroup' onsubmit='returnNewGroupBox();' method='post' encType='multipart/form-data'>
+                        <input class="permahidden" id="postID_newgroup" name="postIDnewgroup" />
+                        <input class="permahidden" id="userID_newgroup" name="userIDnewgroup" />
+                        <label for="groupname">Group name:</label><input type="text" id="group_name" name="groupname" minlength="4" maxlength="32" required placeholder="make it catchy"><br />
+                        <label for="groupfocus">What will the focus of this group be?</label>
+                        <select id="group_focus" name="groupfocus">
+                            <option value="general">General</option>
+                            <option value="ideology">Ideology</option>
+                            <option value="porn">Porn</option>
+                            <option value="news">News</option>
+                            <option value="inquiry">Inquiry</option>
+                            <option value="memes">Memes</option>
+                            <option value="media">Media</option>
+                            <option value="personal">Personal</option>
+                        </select>
+                        <br />
+                        <label for="groupdescription">Describe your vision for this group. This will be at the top of the group page:</label>
+                        <textarea id="groupdescription_group" name="groupdescription" minlength="50" maxlength="800" required></textarea><br />
+                        <label for="groupsettings">Select any additional settings for your group you want:</label><br />
+                        <label for="byinvite">Invite only:</label><input type="checkbox" id="byinvite_group" name="byinvite" value="no" checked><br />
+                        <label for="nolinks">No links:</label><input type="checkbox" id="nolinks_group" name="nolinks" value="no" checked><br />
+                        <br />
+                        <input class="raise" type="submit" value="Submit" />
+                    </form>
+                    <button id="cancelGroup" class="raise" onclick="returnNewGroupBox();">Cancel</button>
+                </div>
+            </div>
+
+            <div id="adminToolsContainer">
+                <div>
+                    <button id="deletebutton" onclick="deleteThisPost($(this).parent().parent().parent().parent().parent().attr('postID'));">delete</button>
+                    <button>test</button>
+                </div>
+            </div>
+
+            <div id="mapDisplay" style="width: 600px; height: 400px;">    
+            </div>
+
+            <div id="warningFloater">
+            </div>
+        </div>
+    </div>
+
+
+    <div>
+        <div class="header-container">
+            <div></div>
+            <div>
+                <button class="paginator" onclick="visitpage($(this).html())" id="page0">0</button>
+                <button class="paginator" onclick="visitpage($(this).html())" id="page1">1</button>
+                <button class="paginator" onclick="visitpage($(this).html())" id="page2">2</button>
+                <button class="paginator" onclick="visitpage($(this).html())" id="page3">3</button>
+                <button class="paginator" onclick="visitpage($(this).html())" id="page4">4</button>
+                <button class="paginator" onclick="visitpage($(this).html())" id="page5">5</button>
+                <button class="paginator" onclick="visitpage($(this).html())" id="page6">6</button>
+            </div>
+            <div></div>
+        </div>
+
+
+
+        <div id="adjacentblocks">
+            <div id="previewframe">
+                <div id="previewframeTopSpace"></div>
+                <div id="postNameInModalPostOnly"></div>
+                <button id="upvote" onclick="upvotePost()">Upvote it</button>
+                <button id="downvote">Hate it</button>
+                <button id="tagIt" onclick="tagPost()">Tag it</button>
+                <button id="closeWindow" onclick="closeAllFrames();document.getElementById('uploadNewPostButton').innerHTML='+';clickOnAddNewPost=false;">Close</button>
+                <div class="autocomplete" style="width:300px;"><input type="text" id="newTagInput" maxlength="20" placeholder="enter your tag (autolowercase)" /></div>
+                <br />
+                <hr />
+                <div id="previewContent">test</div>
+            </div>
+
+
+            <div id="upvoteTagModal">
+                <span>Upvote&nbsp;</span><span id="tagNameInModal"></span><span>&nbsp;tag on post&nbsp;</span><span id="postNameInModal"></span><span>&nbsp;?</span>
+                <div id="contentInModal"></div>
+                <hr />
+                <button id="upvoteTag" onclick="upvoteTag()">Upvote tag?</button>
+                <button class="closeWindow" onclick="closeAllFrames();document.getElementById('uploadNewPostButton').innerHTML='+';clickOnAddNewPost=false;">Close</button>
+            </div>
+
+            <div id="submitnew">
+                <input type="text" id="nodename" maxlength="150" class="submissionslot" placeholder="post title goes here" />
+                <input type="text" id="userInputtedContent" class="submissionslot" placeholder="link goes here" /><br />
+                <input type="text" id="tag1" maxlength="20" class="submissionslot" placeholder="tag1 (must fill!)" /><br />
+                <input type="text" id="tag2" maxlength="20" placeholder="tag2 (optional)" /><br />
+                <button id="upload" onclick="sendNewPostToServer()" disabled="disabled">Upload</button>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div id="gridview">
+    </div>
+    <div id="pileStyle">
+        <canvas id="myCanvas" resize="true"></canvas>
+        <!--<canvas resize="true" id="canvas-1" style="user-select: none;" width="1186" height="806" data-paper-scope="1" class=""></canvas>-->
+    </div>
+    <div id="gameview">
+        <div id="contentdisplayed"></div>
+        <img id="picdisplayed">
+    </div>
+
+    <div id="historyview">
+        <form ref='uploadForm'
+              id='uploadForm'
+              action='/upload'
+              onsubmit='submitGeoHistoryPost();'
+              method='post'
+              encType='multipart/form-data'>
+            <input type="date" />
+        </form>
+
+        <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+        <script src="node_modules/datamaps/dist/datamaps.world.js"></script>
+
+        <div id="container" style="position: relative; width: 500px; height: 300px;"></div>
+        <canvas id='rotatingGlobe' width='400' height='400' style='width: 400px; height: 400px; cursor: move;'></canvas>
+        <canvas id="basicGlobe" width='400' height='400'></canvas>
+    </div>
+
+
+    <div id="rolenumbers"></div>
+    <script type="text/javascript" src="client.js"></script>
+</body>
+
+<script src="phaser.min.js"></script>
+<script src="blockchain.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-dispatch@3"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-quadtree@3"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-timer@3"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-force@3"></script>
+
+<script type="text/javascript" src="https://d3js.org/d3.v6.js"></script>
+</html>
